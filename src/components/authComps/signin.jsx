@@ -4,7 +4,7 @@ import { loginUser } from "../../redux/reducers/userReducer";
 import {useDispatch} from 'react-redux';
 import {auth} from '../../config/firebase'
 
-function SigninForm() {
+function SigninForm(props) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,7 +24,12 @@ function SigninForm() {
       auth,
       ...formData
     }
-    dispatchNewUser(loginUser(data))
+    dispatchNewUser(loginUser(data));
+    console.log('props signin',props);
+    if(props.popopClose){
+      props.popopClose();
+    }
+    
   };
 
   return (

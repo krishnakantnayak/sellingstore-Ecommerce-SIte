@@ -8,7 +8,7 @@ import { signOutUser } from '../redux/reducers/userReducer';
 
 
 const MyNavbar = () => {
-  // const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const uselector=useSelector((state)=>state.user);
   const dispathSignout=useDispatch();
 
@@ -42,6 +42,7 @@ const MyNavbar = () => {
             <Link to="/">Profile</Link>
             {console.log("uselector",uselector)}
             {uselector.user.success && <Link onClick={handlesignOutUser}>Signout</Link>}
+            {/* {auth.currentUser && <Link onClick={handlesignOutUser}>Signout</Link>} */}
             <Link to="/cart">Cart</Link>
           </Nav>
           

@@ -34,7 +34,7 @@ export const registerUser = createAsyncThunk(
         })
         console.log("docref",docref);
         
-        return { user: { uid, displayName, eMail, photoURL }, token };
+        // return { user: { uid, displayName, eMail, photoURL }, token };
       }
     } catch (error) {
       console.log("error in u",error)
@@ -46,28 +46,15 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser=createAsyncThunk(
   'auth/login',
-  async ({ auth, email, password },{rejectWithValue})=>{
-    // signInWithEmailAndPassword(auth, email, password)
-    // .then((userCredential) => {
-    //     // Signed in
-    //     // const user = userCredential.user;
-    //     console.log("here is the user",userCredential)
-    //     return {userCredential}
-    //     // ...
-    // })
-    // .catch((error) => {
-    //     // const errorCode = error.code;
-    //     // const errorMessage = error.message;
-    //     console.log("here is the user error",error)
-    //     // ..
-    // });
+  async ({ auth, email, password },{dispatch,rejectWithValue})=>{
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCredential.user.getIdToken();
       // Extract only the necessary user data
       const { uid, displayName, eMail, photoURL } = userCredential.user;
       console.log("here is the user",userCredential);
-      return { user: { uid, displayName, eMail, photoURL }, token };
+      // return { user: { uid, displayName, eMail, photoURL }, token };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -88,6 +75,35 @@ export const signOutUser=createAsyncThunk(
   }
 )
 
+export const fetchUserDeteils=createAsyncThunk(
+  'auth/fetchUser',
+  async ({uid},{rejectWithValue})=>{
+    try{
+      const userdocref=doc(collection(fDB,"users"),uid);
+      const docSnap = await getDoc(userdocref);
+      const udata=docSnap.data();
+      console.log('user fetched',udata);
+      const {email,name,phone,productList,cartList}=udata;
+      return {email,name,phone,productList,cartList};
+    }
+    catch (error) {
+      return rejectWithValue(error.message);
+    }
+    
+  })
+
+  export const updateUser=createAsyncThunk(
+    'auth/updateUser',
+    async ({uid,pid},{rejectWithValue})=>{
+      try{
+        
+      }
+      catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  )
+
 const initialState = {
     user:{
       loading: false,
@@ -106,22 +122,31 @@ const initialState = {
     reducers: {},
     extraReducers: (builder) => {
       builder
-        .addCase(registerUser.pending, (state) => {
+        // .addCase(registerUser.pending, (state) => {
+        //   return {user:{ loading : true, userInfo:'', userToken:'', success:false, error:null}}
+        // })
+        // .addCase(registerUser.fulfilled, (state, { payload }) => {
+        //   return {user:{ loading : false, userInfo:payload, userToken:'', success:true, error:null}}
+        // })
+        // .addCase(registerUser.rejected, (state, { payload }) => {
+        //   return {user:{ loading : false, userInfo:'', userToken:'', success:false, error:payload}}
+        // })
+        // .addCase(loginUser.pending, (state) => {
+        //   return {user:{ loading : true, userInfo:'', userToken:'', success:false, error:null}}
+        // })
+        // .addCase(loginUser.fulfilled, (state, { payload }) => {
+        //   return {user:{ loading : false, userInfo:payload, userToken:'', success:true, error:null}}
+        // })
+        // .addCase(loginUser.rejected, (state, { payload }) => {
+        //   return {user:{ loading : false, userInfo:'', userToken:'', success:false, error:payload}}
+        // })
+        .addCase(fetchUserDeteils.pending, (state) => {
           return {user:{ loading : true, userInfo:'', userToken:'', success:false, error:null}}
         })
-        .addCase(registerUser.fulfilled, (state, { payload }) => {
-          return {user:{ loading : false, userInfo:payload, userToken:payload, success:true, error:null}}
+        .addCase(fetchUserDeteils.fulfilled, (state, { payload }) => {
+          return {user:{ loading : false, userInfo:payload, userToken:'', success:true, error:null}}
         })
-        .addCase(registerUser.rejected, (state, { payload }) => {
-          return {user:{ loading : false, userInfo:'', userToken:'', success:false, error:payload}}
-        })
-        .addCase(loginUser.pending, (state) => {
-          return {user:{ loading : true, userInfo:'', userToken:'', success:false, error:null}}
-        })
-        .addCase(loginUser.fulfilled, (state, { payload }) => {
-          return {user:{ loading : false, userInfo:payload, userToken:payload, success:true, error:null}}
-        })
-        .addCase(loginUser.rejected, (state, { payload }) => {
+        .addCase(fetchUserDeteils.rejected, (state, { payload }) => {
           return {user:{ loading : false, userInfo:'', userToken:'', success:false, error:payload}}
         })
         .addCase(signOutUser.pending, (state) => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { productAction } from '../../redux/reducers/productReducer';
 import { useDispatch,useSelector } from 'react-redux';
 import { addProduct } from '../../redux/reducers/productReducer';
+import { auth } from '../../config/firebase';
 function MyForm() {
   const [form, setForm] = useState({
     name: '',
@@ -28,7 +29,8 @@ function MyForm() {
     
     console.log(form);
     dispatch(productAction.add(form));
-    dispatch(addProduct({"user":uselector.user,"product":form}));
+    
+    dispatch(addProduct({"user":auth.currentUser,"product":form}));
   };
 
   return (
